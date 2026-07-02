@@ -1,0 +1,21 @@
+# Rendered output is regenerable via lib/gate.sh; do not commit frames/videos.
+projects/*/out/
+!projects/kit-testbench/out/.gitkeep
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# Assets are provided per deployment, not committed (keep the placeholders).
+assets/fonts/*
+assets/music/*
+assets/heroes/*
+!assets/**/README.md
+!assets/**/.gitkeep

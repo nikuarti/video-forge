@@ -1,0 +1,26 @@
+name: kit-ci
+# The kit has its own CI: it must render + verify GREEN before any kit change
+# ships. Guards that motion-kit.js is in sync with lib/src and that the
+# contract -> render -> verify pipeline passes on the testbench.
+on:
+  push:
+    paths: ["lib/**", "projects/kit-testbench/**", "templates/starter/**"]
+  pull_request:
+    paths: ["lib/**", "projects/kit-testbench/**", "templates/starter/**"]
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install Pillow
+      - name: motion-kit.js in sync with src
+        run: node lib/build.js --check
+      - name: testbench renders + verifies green
+        run: bash lib/gate.sh projects/kit-testbench --scale 0.4
+      - name: starter template verifies green
+        run: |
+          cp -r templates/starter /tmp/starter && bash lib/gate.sh /tmp/starter --scale 0.3

@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>starter</title>
+  <style>
+    html, body { margin: 0; background: #0b0b0f; }
+    #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+    .actor { position: absolute; transform: translate(-50%, -50%); }
+    #subject { left: 35%; top: 42%; width: 16%; height: 28%; background: #5b8cff; border-radius: 50%; }
+    #line { left: 50%; top: 72%; color: #f2f2f7; font: 700 84px/1 Inter, sans-serif; opacity: 0; white-space: nowrap; }
+    #payoff { left: 50%; top: 30%; width: 34%; height: 5%; background: #2ce6a0; opacity: 0; }
+  </style>
+</head>
+<body>
+  <div id="stage" data-hf-stage>
+    <div id="subject" class="actor"></div>
+    <div id="line" class="actor">your message, in words</div>
+    <div id="payoff" class="actor"></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <!-- adjust the relative path to lib/motion-kit.js from projects/<slug>/ -->
+  <script src="../../lib/motion-kit.js"></script>
+  <script src="composition.js"></script>
+  <script>window.buildComposition(window.gsap, window.MotionKit);</script>
+</body>
+</html>

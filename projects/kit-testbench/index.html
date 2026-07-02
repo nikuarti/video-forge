@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>kit-testbench</title>
+  <style>
+    html, body { margin: 0; background: #0b0b0f; }
+    /* HyperFrames seeks this single stage; one composition, one timeline. */
+    #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+    .actor { position: absolute; transform: translate(-50%, -50%); }
+    #hero { left: 15%; top: 50%; width: 14%; height: 24%;
+            background: #5b8cff; border-radius: 50%; }
+    #title { left: 50%; top: 72%; color: #f2f2f7; font: 700 96px/1 Inter, sans-serif;
+             opacity: 0; white-space: nowrap; }
+    #accent { left: 50%; top: 32%; width: 30%; height: 5%;
+              background: #2ce6a0; opacity: 0; }
+  </style>
+</head>
+<body>
+  <!-- data-hf-* attributes and the timeline contract are owned by the official
+       HyperFrames skill; this stage is intentionally minimal. -->
+  <div id="stage" data-hf-stage>
+    <div id="hero" class="actor"></div>
+    <div id="title" class="actor">verify green</div>
+    <div id="accent" class="actor"></div>
+  </div>
+
+  <!-- Load order: GSAP, then the built kit, then the composition. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="../../lib/motion-kit.js"></script>
+  <script src="composition.js"></script>
+  <script>
+    // Real render entrypoint: build the single paused timeline. The HyperFrames
+    // renderer seeks it frame-by-frame; window.__motionContract is dumped and
+    // must match the headless-extracted contract.
+    window.buildComposition(window.gsap, window.MotionKit);
+  </script>
+</body>
+</html>
