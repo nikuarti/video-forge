@@ -50,7 +50,7 @@ enforces this in code.
 
 - **Framework facts** (data attributes, timeline contract, transitions, layout,
   quality gates) → the official `hyperframes` skills
-  (`npx skills add heygen-com/hyperframes`). On a framework conflict, the
+  (`npx hyperframes skills`). On a framework conflict, the
   official skill wins.
 - **Taste** (beats, motion, story) → `best-practices/` + `learnings/`. On a
   taste conflict, best-practices + recent learnings win. Recent learnings

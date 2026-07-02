@@ -11,8 +11,9 @@
 (function (root) {
   function buildComposition(gsap, K) {
     // The single mandatory sentence. Without it, timeline() refuses to build.
-    K.timeline({
+    var built = K.timeline({
       gsap: gsap,
+      compositionId: "kit-testbench",
       message: "The motion kit renders one composition and verifies every promise.",
       fps: 30,
       durationSeconds: 4,        // 120 frames
@@ -48,6 +49,8 @@
 
     // First frame and payoff frame must be non-blank.
     K.payoff({ at: 118 });
+
+    return built._tl;
   }
 
   root.buildComposition = buildComposition;

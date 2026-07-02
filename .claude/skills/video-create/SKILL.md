@@ -17,7 +17,7 @@ one paused GSAP timeline, cuts inside it. Not clips stitched with ffmpeg.
 ## 0. Load the playbook (every run)
 
 - Official framework mechanics: ensure the hyperframes skill is present
-  (`npx skills add heygen-com/hyperframes`). It is authoritative for data
+  (`npx hyperframes skills`). It is authoritative for data
   attributes, the timeline contract, scene transitions, layout, quality gates.
 - `lib/README.md` (kit mechanics), `ARCHITECTURE.md`, `CLAUDE.md`.
 - `best-practices/README.md` + the relevant `best-practices/<genre>.md`.
@@ -50,7 +50,10 @@ creates the moment, and the gate it earns (a promise or a colorGuard).
 ```
 cp -r templates/starter projects/<slug>
 ```
-Fix the relative path to `lib/motion-kit.js` in `index.html` if nesting differs.
+Rename `compositionId` in `composition.js` AND `data-composition-id` in
+`index.html` to `<slug>` together (`lib/gate.sh`'s contract extractor will
+refuse to proceed on a mismatch). `lib/gate.sh` copies `lib/motion-kit.js`
+into the project root-relative automatically; no path editing needed.
 
 ## 4. Assemble the composition
 
@@ -76,11 +79,16 @@ Rules while assembling:
 ## 5. Render silent + VERIFY GREEN
 
 ```
-lib/gate.sh projects/<slug>          # add --scale 0.5 for fast CI iterations
+lib/gate.sh projects/<slug>
 ```
-This extracts the contract, renders silent, and runs the pixel verifier. **A
-render is not done until this exits 0.** Fix reds and re-run. Never hand-wave a
-red.
+This extracts the contract, renders silent through real headless Chrome (via
+the HyperFrames CLI; run `npx hyperframes browser ensure` once if this is the
+first render on the machine), and runs the pixel verifier. **A render is not
+done until this exits 0.** Fix reds and re-run. Never hand-wave a red.
+
+Also run `npx hyperframes lint projects/<slug>` — it checks framework-mechanics
+facts (`data-composition-id`/width/height/duration, `window.__timelines`
+registration, clip overlap) that `gate.sh`'s pixel verifier does not.
 
 ## 6. Hand off
 

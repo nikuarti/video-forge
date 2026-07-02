@@ -2,6 +2,11 @@
 projects/*/out/
 !projects/kit-testbench/out/.gitkeep
 
+# gate.sh copies the generated kit root-relative into each project so
+# real HyperFrames renders get root-relative asset paths; regenerated
+# every gate run from the canonical lib/motion-kit.js.
+projects/*/motion-kit.js
+
 # Node
 node_modules/
 npm-debug.log*

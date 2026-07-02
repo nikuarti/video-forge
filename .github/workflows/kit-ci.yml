@@ -19,8 +19,13 @@ jobs:
       - run: pip install Pillow
       - name: motion-kit.js in sync with src
         run: node lib/build.js --check
-      - name: testbench renders + verifies green
-        run: bash lib/gate.sh projects/kit-testbench --scale 0.4
-      - name: starter template verifies green
+      - name: fetch Chrome Headless Shell for HyperFrames
+        run: npx --yes hyperframes browser ensure
+      - name: lint testbench + starter (framework mechanics contract)
         run: |
-          cp -r templates/starter /tmp/starter && bash lib/gate.sh /tmp/starter --scale 0.3
+          npx --no-install hyperframes lint projects/kit-testbench
+          cp -r templates/starter /tmp/starter && npx --no-install hyperframes lint /tmp/starter
+      - name: testbench renders + verifies green (real HyperFrames/Chrome)
+        run: bash lib/gate.sh projects/kit-testbench
+      - name: starter template renders + verifies green (real HyperFrames/Chrome)
+        run: bash lib/gate.sh /tmp/starter

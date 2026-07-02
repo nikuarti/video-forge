@@ -1,27 +1,42 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
   <title>starter</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <style>
-    html, body { margin: 0; background: #0b0b0f; }
-    #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
-    .actor { position: absolute; transform: translate(-50%, -50%); }
-    #subject { left: 35%; top: 42%; width: 16%; height: 28%; background: #5b8cff; border-radius: 50%; }
-    #line { left: 50%; top: 72%; color: #f2f2f7; font: 700 84px/1 Inter, sans-serif; opacity: 0; white-space: nowrap; }
-    #payoff { left: 50%; top: 30%; width: 34%; height: 5%; background: #2ce6a0; opacity: 0; }
+    body { margin: 0; background: #0b0b0f; }
   </style>
 </head>
 <body>
-  <div id="stage" data-hf-stage>
-    <div id="subject" class="actor"></div>
-    <div id="line" class="actor">your message, in words</div>
-    <div id="payoff" class="actor"></div>
+  <!-- data-composition-id/width/height/duration are STATIC: read by the
+       framework before any script runs. Must match composition.js's
+       timeline() call exactly (lib/verify/extract_contract.js enforces this
+       as a generic drift check). Rename data-composition-id AND
+       compositionId in composition.js together when you copy this starter. -->
+  <div id="root" data-composition-id="starter" data-start="0"
+       data-width="1920" data-height="1080" data-duration="6"
+       style="position:relative; width:1920px; height:1080px; overflow:hidden;">
+    <!-- Empty placeholders: composition.js's place() owns all styling
+         (position, color, size, text) from the same geometry that drives
+         the contract, so there is nothing to keep in sync here. -->
+    <div id="subject"></div>
+    <div id="line"></div>
+    <div id="payoff"></div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <!-- adjust the relative path to lib/motion-kit.js from projects/<slug>/ -->
-  <script src="../../lib/motion-kit.js"></script>
+
+  <!-- Load order: GSAP, then the built kit (copied root-relative by
+       lib/gate.sh; renders require root-relative asset paths), then the
+       composition. -->
+  <script src="motion-kit.js"></script>
   <script src="composition.js"></script>
-  <script>window.buildComposition(window.gsap, window.MotionKit);</script>
+  <script>
+    var __tl = window.buildComposition(window.gsap, window.MotionKit);
+    // motion-kit.js registers this internally too (defense in depth); this
+    // explicit line satisfies `hyperframes lint`'s static inline-script scan.
+    window.__timelines = window.__timelines || {};
+    window.__timelines["starter"] = __tl;
+  </script>
 </body>
 </html>

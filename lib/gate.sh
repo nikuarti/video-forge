@@ -20,8 +20,14 @@ node "$ROOT/lib/build.js" --check
 echo "==> extract contract (headless, deterministic)"
 node "$ROOT/lib/verify/extract_contract.js" "$PROJ/composition.js" "$OUT/contract.json"
 
+# Renders are served with the project directory as their root; asset paths
+# must be root-relative (no "../"). Copy the generated kit in root-relative
+# so index.html can <script src="motion-kit.js">. Gitignored, regenerated
+# every gate run from the canonical lib/motion-kit.js.
+cp "$ROOT/lib/motion-kit.js" "$PROJ/motion-kit.js"
+
 echo "==> render silent"
-bash "$ROOT/lib/verify/render.sh" "$PROJ/index.html" "$OUT/contract.json" "$OUT/frames" "$@"
+bash "$ROOT/lib/verify/render.sh" "$PROJ" "$OUT/contract.json" "$OUT/frames" "$@"
 
 echo "==> verify (pixel gate)"
 python3 "$ROOT/lib/verify/verify.py" "$OUT/contract.json" "$OUT/frames" --json "$OUT/report.json"

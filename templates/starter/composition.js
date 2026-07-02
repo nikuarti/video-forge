@@ -8,8 +8,12 @@
  */
 (function (root) {
   function buildComposition(gsap, K) {
-    K.timeline({
+    // compositionId MUST match index.html's static data-composition-id
+    // (gate.sh's contract extractor enforces this as a drift check). Rename
+    // BOTH to your project slug when you copy this starter.
+    var built = K.timeline({
       gsap: gsap,
+      compositionId: "starter",
       // MANDATORY: the single sentence from your brief. timeline() refuses
       // to build without it.
       message: "REPLACE ME with the one sentence the viewer should understand.",
@@ -40,6 +44,8 @@
     K.fade(payoff, { start: { s: 4.6 }, end: { s: 5.2 }, from: 0, to: 1 });
 
     K.payoff({});
+
+    return built._tl;
   }
 
   root.buildComposition = buildComposition;

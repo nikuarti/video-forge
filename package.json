@@ -8,10 +8,12 @@
     "build": "node lib/build.js",
     "build:check": "node lib/build.js --check",
     "gate": "bash lib/gate.sh",
-    "gate:testbench": "bash lib/gate.sh projects/kit-testbench --scale 0.4",
+    "gate:testbench": "bash lib/gate.sh projects/kit-testbench",
     "test": "npm run build:check && npm run gate:testbench",
     "catalog": "npx hyperframes catalog",
-    "skills:hyperframes": "npx skills add heygen-com/hyperframes"
+    "skills:hyperframes": "npx hyperframes skills",
+    "browser:ensure": "npx hyperframes browser ensure",
+    "doctor": "npx hyperframes doctor"
   },
   "keywords": ["hyperframes", "gsap", "marketing", "video", "generative"],
   "license": "UNLICENSED"
