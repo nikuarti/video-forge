@@ -33,8 +33,10 @@ TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 SILENT="$TMP/silent.mp4"
 
 # 1) frames -> silent video (yuv420p for broad playback).
+# Glob, not a fixed-width pattern: the HyperFrames CLI writes frame_NNNNNN.png
+# (6 digits, 1-based) while the reference renderer writes a different width.
 ffmpeg -y -hide_banner -loglevel error -framerate "$FPS" \
-  -i "$FRAMES/frame_%05d.png" -pix_fmt yuv420p -c:v libx264 -crf 18 "$SILENT"
+  -pattern_type glob -i "$FRAMES/frame_*.png" -pix_fmt yuv420p -c:v libx264 -crf 18 "$SILENT"
 
 # 2) build the video filter for burned captions (if any).
 VF=()

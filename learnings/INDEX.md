@@ -16,4 +16,4 @@ Learning file front-matter: `date`, `project`, `kind` (mechanics|taste),
 
 | Date | Project | Kind | Recur | Summary |
 |------|---------|------|-------|---------|
-| _(none yet)_ | | | | |
+| 2026-09-28 | screen-recording-demo (private) | mechanics | 1 | png-sequence renders were transparent (black when encoded) but gate stayed green: kit now paints bg + `opaque` check; footage gated by new `detail` check; mux.sh frame-glob fix. |

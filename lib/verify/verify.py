@@ -12,6 +12,11 @@ Promise types (see lib/src/20-primitives.js / 30-catalog.js):
   ink           a text actor's region contains ink (non-bg pixels) at a frame
   absent-color  a forbidden color does NOT appear in a region before a frame
   nonblank      a frame is not blank (enough non-bg pixels)
+  opaque        a frame has no transparent pixels (RGBA captures flatten
+                undrawn areas to black when encoded); registered by timeline()
+  detail        a region has real image detail at a frame (luma std dev above a
+                floor): catches embedded footage that failed to decode/seek and
+                left a flat white/black/grey panel. Register via wrapCatalog.
 
 Every generic invariant a human catches becomes a NEW check here (never only
 prose in best-practices). That is the mechanics half of the ratchet.
@@ -47,6 +52,11 @@ class Frames:
         if fr not in self._cache:
             self._cache[fr] = Image.open(self.files[fr]).convert("RGB")
         return self._cache[fr]
+
+    def raw(self, fr):
+        """The frame as captured (keeps alpha), for opacity checks."""
+        fr = max(0, min(fr, len(self.files) - 1))
+        return Image.open(self.files[fr])
 
     def count(self):
         return len(self.files)
@@ -160,12 +170,43 @@ def check_nonblank(p, frames, contract):
     return False, "frame %d looks blank (%d ink samples)" % (p["atFrame"], non)
 
 
+def check_opaque(p, frames, contract):
+    img = frames.raw(p["atFrame"])
+    if img.mode not in ("RGBA", "LA", "PA") and "transparency" not in img.info:
+        return True, "no alpha channel"
+    alpha = img.convert("RGBA").getchannel("A")
+    lo, _ = alpha.getextrema()
+    if lo == 255:
+        return True, "fully opaque"
+    hist = alpha.histogram()
+    clear = sum(hist[:255])
+    return False, "%d non-opaque pixels (min alpha %d): background not painted" % (clear, lo)
+
+
+def check_detail(p, frames, contract):
+    img = frames.get(p["atFrame"]).convert("L")
+    W, H = img.size
+    r = p.get("region") or {"x": 0, "y": 0, "w": 1, "h": 1}
+    box = (int(r["x"] * W), int(r["y"] * H),
+           int((r["x"] + r["w"]) * W), int((r["y"] + r["h"]) * H))
+    px = img.crop(box).load()
+    bw, bh = box[2] - box[0], box[3] - box[1]
+    step = max(1, min(bw, bh) // 150)
+    vals = [px[x, y] for y in range(0, bh, step) for x in range(0, bw, step)]
+    mean = sum(vals) / len(vals)
+    std = (sum((v - mean) ** 2 for v in vals) / len(vals)) ** 0.5
+    floor = p.get("minStd", 12.0)
+    return std >= floor, "luma std=%.1f (min %.1f) mean=%.0f" % (std, floor, mean)
+
+
 CHECKS = {
     "centroid": check_centroid,
     "presence": check_presence,
     "ink": check_ink,
     "absent-color": check_absent_color,
     "nonblank": check_nonblank,
+    "detail": check_detail,
+    "opaque": check_opaque,
 }
 
 

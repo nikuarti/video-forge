@@ -24,3 +24,6 @@ assets/music/*
 assets/heroes/*
 !assets/**/README.md
 !assets/**/.gitkeep
+
+# Local Python env for Kokoro TTS (HYPERFRAMES_PYTHON)
+.venv/
